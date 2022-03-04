@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const app = express()
+var cors=require('cors')
 app.use(express.json())
 app.set('port', 3000)
 app.use ((req,res,next) => {
@@ -18,8 +19,7 @@ MongoClient.connect('mongodb+srv://afrahmdx:afrah123@coursework2.4wexn.mongodb.n
     db = client.db('Vue_afterschool_club')
 })
 
-var cors=require('cors')
-app.use(cors())
+
 
 app.use(function(req, res, next) {
     var filePath = path.join(__dirname, "static", req.url);
@@ -41,6 +41,8 @@ app.use(function(req ,res) {
     res.status(404);
     res.send("File not found!");
 });
+
+app.use(cors())
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname,static,'/static/Coursework1.html'));
