@@ -21,7 +21,7 @@ MongoClient.connect('mongodb+srv://afrahmdx:afrah123@coursework2.4wexn.mongodb.n
 })
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname,static,'/Coursework1.html'));
+    res.sendFile(path.join(__dirname,static,'/static/Coursework1.html'));
   })
 
 
