@@ -4,7 +4,7 @@ const fs = require('fs')
 const app = express()
 var cors=require('cors')
 app.use(express.json())
-app.use(cors())
+
 app.set('port', 3000)
 app.use ((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -46,7 +46,7 @@ app.use(function(req ,res) {
 
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname,static,'/static/Coursework1.html'));
+    res.sendFile(path.join(__dirname,static,'./static/Coursework1.html'));
   })
 
 app.param('collectionName', (req, res, next, collectionName) => {
