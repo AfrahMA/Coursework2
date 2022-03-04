@@ -1,0 +1,154 @@
+<html>
+
+<head>
+    <title>School lessons</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="subjects.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <h1 v-text="sitename"></h1>
+            <button v-on:click='showCheckout'>
+                {{cartItemCount}}
+                <span class="fas fa-cart-plus"></span> Shopping Cart
+            </button> 
+            <button v-else disabled="disabled">
+                <span class="fas fa-cart-plus"></span> Shopping Cart
+            </button>
+        </header>
+        <main>
+            <div v-if='showSubject'>
+                <div v-for="subject in sortedProducts">
+                    <p v-text="subject.lesson"></p>
+                    <figure>
+                        <img v-bind:src="subject.image" style="width: 25%; height: 25%">
+                    </figure>
+                    <p v-text="subject.location"></p>
+                    <p>Price: {{subject.price}}</p>
+                    <p>Spaces: {{subject.spaces -cartCount(subject.id) }}</p>
+                    
+
+                    <button v-on:click='addToCart(subject)' v-if='canAddToCart(subject)'>Add to cart</button>
+
+                    <button disabled="disabled" v-else>Add to cart</button>
+                    
+                    <span v-if='subject.spaces === cartCount(subject.id)'>All out!</span>
+                    <span v-else-if="subject.spaces - cartCount(subject.id) < 5">
+                        Only {{subject.spaces - cartCount(subject.id)}} left!
+                    </span>
+                    <span v-else> Buy now!</span>
+  
+                </div>
+            </div>
+            <div v-else>
+                <div v-for="(subject, index) in cart">
+                    <h2 v-text="subject.title"></h2>
+                    <figure>
+                        <img v-bind:src="subject.image">
+                    </figure>
+                    <p v-html="subject.location"></p>
+                    <p>Price: {{subject.price}}</p>
+                    <button v-on:click='removeLesson(index)'>Remove Lesson</button>
+                </div>
+                <h2>Checkout</h2>
+                <p>
+                    <strong>First Name:</strong>
+                    <input v-model.trim="order.firstName" />
+                </p>
+                <p>
+                    <strong>Last Name:</strong>
+                    <input v-model.trim="order.lastName" />
+                </p>
+                <p>
+                    <strong>Phone Number:</strong>
+                    <input v-model.number="order.phoneNumber" type="number" />
+
+                </p>
+
+                <h2>Order Information</h2>
+                <p>First Name: {{order.firstName}}</p>
+                <p>Last Name: {{order.lastName}}</p>
+                <p>Phone Number: {{order.phoneNumber}}</p>
+
+                <button v-on:click="submitForm">Place Order</button>
+            </div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        var webstore = new Vue({
+            el: '#app',
+            data: {
+                sitename: 'School Lessons',
+                subjects: [],
+                cart: [],
+                showSubject: true,
+                order: {
+                    firstName: '',
+                    lastName: '',
+                    phoneNumber: ''                   
+                },
+            },
+            created: function(){
+                    fetch('http://localhost:3000/collection/lessons').then(
+                        function (response){
+                            response.json().then(
+                                function (json){
+                                  console.log({json})
+                                    webstore.subjects = json;
+                                    console.log(json);
+                                });
+                            })
+                        },
+            methods: {
+                addToCart(subject) {
+                    this.cart.push(subject);
+                },
+                showCheckout() {
+                    this.showSubject = this.showSubject ? false : true;
+                },
+                submitForm() {
+                    alert('Order submitted!')
+                },
+                canAddToCart(subject) {
+                    return subject.spaces> this.cartCount(subject.id);
+                },
+                cartCount(id) {
+                    let count = 0;
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] === id) {
+                            count++;
+                        }
+                    }
+                    return count;
+                },
+                removeLesson(index) {
+                    this.cart.splice(index, 1)
+                },
+                
+                        
+            },
+            computed: {
+                cartItemCount() {
+                    return this.cart.length;
+                },
+                sortedProducts() {
+                    let productsArray = this.subjects.slice(0);
+                    function compare(a, b) {
+                        if (a.price > b.price)
+                            return 1;
+                        if (a.price < b.price)
+                            return -1;
+                        return 0;
+                    }
+                    return productsArray.sort(compare);
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>

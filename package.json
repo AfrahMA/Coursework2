@@ -1,0 +1,9 @@
+{
+  "name":"static-file-fun",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
