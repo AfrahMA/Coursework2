@@ -4,8 +4,8 @@ const fs = require('fs')
 const app = express()
 var cors=require('cors')
 app.use(express.json())
-
 app.set('port', 3000)
+app.use(cors())
 app.use ((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.header("Access-Control-Allow-Headers","*");
@@ -20,6 +20,9 @@ MongoClient.connect('mongodb+srv://afrahmdx:afrah123@coursework2.4wexn.mongodb.n
     db = client.db('Vue_afterschool_club')
 })
 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname,static,'/Coursework1.html'));
+  })
 
 
 app.use(function(req, res, next) {
@@ -38,16 +41,6 @@ app.use(function(req, res, next) {
     });
 });
 
-app.use(function(req ,res) {
-    res.status(404);
-    res.send("File not found!");
-});
-
-
-
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname,static,'./static/Coursework1.html'));
-  })
 
 app.param('collectionName', (req, res, next, collectionName) => {
     req.collection = db.collection(collectionName)
@@ -71,4 +64,8 @@ app.post('/collection/:collectionName', (req, res, next) => {
     })
 })
 
+app.use(function(req ,res) {
+    res.status(404);
+    res.send("File not found!");
+});
 app.listen(3000);
